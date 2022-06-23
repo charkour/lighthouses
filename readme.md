@@ -1,0 +1,1 @@
+useage: `node cli.js [input] [options]`
