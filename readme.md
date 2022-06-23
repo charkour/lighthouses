@@ -1,6 +1,6 @@
 # Lighthouses
 
-A simple script to generate Lighthouse scores for multiple sites with multiple runs.
+A simple script to run multiple lighthouse audits on multiple sites.
 
 usage: `node cli.js <input> [options]`
 
