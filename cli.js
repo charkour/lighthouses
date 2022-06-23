@@ -4,6 +4,7 @@ import meow from "meow";
 import { runPsi } from "./index.js";
 import "dotenv/config";
 
+// TODO: be able to add a list of sites rather than input --websites -w
 const cli = meow(
   `
 	Usage
