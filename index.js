@@ -14,8 +14,8 @@ export const runPsi = async (urls, options) => {
   console.log("Running PageSpeed Insights...");
   const numRuns = options.number ?? NUM_RUNS;
 
-  for (const platform of platforms) {
-    for (const url of urls) {
+  for (const url of urls) {
+    for (const platform of platforms) {
       const results = [];
       for (let i = 0; i < numRuns; i++) {
         const key = options.key ?? process.env.API_KEY ?? "";
