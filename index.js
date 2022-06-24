@@ -87,9 +87,9 @@ const singleOutput = (runnerResult) => {
     pwa,
   } = runnerResult.categories;
   console.log(runnerResult.configSettings.formFactor, runnerResult.finalUrl, {
-    performance: performance.score * 100,
-    accessibility: accessibility.score * 100,
-    "best-practices": bestPractices.score * 100,
-    seo: seo.score * 100,
+    performance: Math.round(performance.score * 100),
+    accessibility: Math.round(accessibility.score * 100),
+    bestPractices: Math.round(bestPractices.score * 100),
+    seo: Math.round(seo.score * 100),
   });
 };
