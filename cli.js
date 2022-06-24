@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import fs from 'fs';
+import fs from "fs";
 
 import meow from "meow";
 import { runPsi } from "./index.js";
@@ -38,8 +38,8 @@ const cli = meow(
       },
       websites: {
         type: "string",
-        alias: "w"
-      }
+        alias: "w",
+      },
     },
   }
 );
@@ -47,8 +47,11 @@ const cli = meow(
 const getListOfWebsites = (cli) => {
   if (cli.flags.websites) {
     try {
-      const data = fs.readFileSync(cli.flags.websites, 'utf8');
-      return data.split("\n")
+      const data = fs
+        .readFileSync(cli.flags.websites, "utf8")
+        .split("\n")
+        .filter((value) => !!value && !value.startsWith("//"));
+      return data;
     } catch (err) {
       console.error(err);
     }
@@ -64,5 +67,3 @@ if (!websites.length) {
 }
 
 runPsi(websites, cli.flags);
-
-
