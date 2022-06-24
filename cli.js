@@ -58,7 +58,7 @@ const getListOfWebsites = (cli) => {
 
 const websites = getListOfWebsites(cli);
 
-if (!websites) {
+if (!websites.length) {
   console.error("Specify a URL: $ node cli.js www.example.com");
   process.exit(1);
 }
