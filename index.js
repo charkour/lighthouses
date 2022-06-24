@@ -71,7 +71,7 @@ export const runPsi = async (urls, options) => {
       const median = computeMedianRun(results);
       console.log(
         "Median performance score was",
-        median.categories.performance.score * 100
+        Math.round(median.categories.performance.score * 100)
       );
     }
   }
