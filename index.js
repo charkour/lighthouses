@@ -8,7 +8,7 @@ const require = createRequire(import.meta.url);
 const lighthouseCli = require.resolve("lighthouse/lighthouse-cli");
 
 const NUM_RUNS = 5;
-const platforms = ["desktop", "mobile"];
+const platforms = ["mobile", "desktop"];
 
 export const runPsi = async (urls, options) => {
   console.log("Running PageSpeed Insights...");
@@ -86,6 +86,7 @@ const singleOutput = (runnerResult) => {
     "best-practices": bestPractices,
     pwa,
   } = runnerResult.categories;
+  // TODO: add chalk to color terminal output
   console.log(runnerResult.configSettings.formFactor, runnerResult.finalUrl, {
     performance: Math.round(performance.score * 100),
     accessibility: Math.round(accessibility.score * 100),
