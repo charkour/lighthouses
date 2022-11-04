@@ -14,6 +14,8 @@ export const runPsi = async (urls, options) => {
   console.log("Running PageSpeed Insights...");
   const numRuns = options.number ?? NUM_RUNS;
 
+  options.mobile && platforms.filter((url) => url === 'mobile');
+
   for (const url of urls) {
     for (const platform of platforms) {
       const results = [];

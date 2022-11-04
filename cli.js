@@ -16,6 +16,7 @@ const cli = meow(
 	  --local, l Run the tests on your local machine (optional, defaults to Google)
 	  --num, n Number of runs (optional, defaults to 5)
     --websites, w List of URLs to audit separated by a newline \\n
+    --mobile, -m Runs only a mobile audit
 `,
   {
     importMeta: import.meta,
@@ -40,6 +41,10 @@ const cli = meow(
         type: "string",
         alias: "w",
       },
+      mobile: {
+        type: "boolean",
+        alias: "m",
+      }
     },
   }
 );
