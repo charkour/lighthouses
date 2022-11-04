@@ -20,11 +20,13 @@ export const runPsi = async (urls, options) => {
     for (const platform of platforms) {
       const results = [];
       for (let i = 0; i < numRuns; i++) {
+        // To prevent Google PSI API from returning the previous cached result
+        const urlWithRun = `${url}?run=${i}`;
         const key = options.key ?? process.env.API_KEY ?? "";
         console.log(
           `Running ${platform} Lighthouse audit #${i + 1} ${
             options.local ? "locally" : "on Google"
-          } for ${url}`
+          } for ${urlWithRun}`
         );
 
         // TODO: remove this let
@@ -35,7 +37,7 @@ export const runPsi = async (urls, options) => {
           const { status = -1, stdout } = spawnSync("node", [
             lighthouseCli,
             "--config-path=./node_modules/lighthouse/lighthouse-core/config/lr-desktop-config.js",
-            url,
+            urlWithRun,
             '--chromeFlags="--headless"',
             "--output=json",
             "--throttling.rttMs=40",
@@ -49,7 +51,7 @@ export const runPsi = async (urls, options) => {
           }
           runnerResult = JSON.parse(stdout);
         } else {
-          const { data } = await psi(url, {
+          const { data } = await psi(urlWithRun, {
             key,
             strategy: platform,
             category: [
