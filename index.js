@@ -66,6 +66,7 @@ export const runPsi = async (urls, options) => {
           runnerResult = data.lighthouseResult;
           // TODO: output field data from PSI
           // console.log()
+          console.log('using PSI server')
         }
 
         singleOutput(runnerResult);
