@@ -165,7 +165,6 @@ export const runPsi = async (options: Options) => {
 
             customResults = results.reduce((acc, curr) => {
                 const { performance, seo, accessibility, 'best-practices': bestPractices } = curr.categories;
-                console.log('acc[url]', acc[url]);
                 acc[url] = {
                     ...customResults[url],
                     [platform]: [
@@ -183,5 +182,5 @@ export const runPsi = async (options: Options) => {
             }, {} as CustomResults);
         }
     }
-    fs.writeFileSync('results.json', JSON.stringify(customResults, null, 2));
+    fs.writeFileSync(`results/${new Date().toISOString()}.json`, JSON.stringify(customResults, null, 2));
 };
