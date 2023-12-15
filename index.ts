@@ -9,7 +9,43 @@ const metaRequire = createRequire(import.meta.url);
 const lighthouseCli = metaRequire.resolve('lighthouse/lighthouse-cli');
 
 const NUM_RUNS = 5;
-const platforms: Array<'mobile' | 'desktop'> = ['mobile', 'desktop'];
+const platforms = ['mobile', 'desktop'] as const;
+
+const localRun = (urlWithRun: string) => {
+  // TODO: allow local to simulate mobile. Will only simulate desktop.
+  const { status = -1, stdout } = spawnSync('node', [
+    lighthouseCli,
+    '--config-path=./node_modules/lighthouse/lighthouse-core/config/lr-desktop-config.js',
+    urlWithRun,
+    '--chromeFlags="--headless"',
+    '--output=json',
+    '--throttling.rttMs=40',
+    '--throttling.throughputKbps=10240',
+    // https://lighthouse-cpu-throttling-calculator.vercel.app/
+    '--throttling.cpuSlowdownMultiplier=6',
+  ]);
+  if (status !== 0) {
+    throw new Error('Lighthouse failed, skipping run...');
+  }
+  return JSON.parse(stdout.toString());
+};
+
+const psiRun = async (
+  urlWithRun: string,
+  key: string,
+  platform: (typeof platforms)[number]
+) => {
+  const { data } = await psi(urlWithRun, {
+    key,
+    strategy: platform,
+    //TODO: Figure out why this is necessary for the tests to run but doesn't exist in the types
+    category: ['performance', 'accessibility', 'best-practices', 'seo', 'pwa'],
+  });
+
+  // TODO: output field data from PSI
+  console.log('using PSI server');
+  return data.lighthouseResult;
+};
 
 export const runPsi = async (urls: string[], options: Options) => {
   console.log('Running PageSpeed Insights...');
@@ -30,49 +66,16 @@ export const runPsi = async (urls: string[], options: Options) => {
           } for ${urlWithRun}`
         );
 
-        // TODO: remove this let
-        let runnerResult;
-
-        if (options.local) {
-          // TODO: allow local to simulate mobile. Will only simulate desktop.
-          const { status = -1, stdout } = spawnSync('node', [
-            lighthouseCli,
-            '--config-path=./node_modules/lighthouse/lighthouse-core/config/lr-desktop-config.js',
-            urlWithRun,
-            '--chromeFlags="--headless"',
-            '--output=json',
-            '--throttling.rttMs=40',
-            '--throttling.throughputKbps=10240',
-            // https://lighthouse-cpu-throttling-calculator.vercel.app/
-            '--throttling.cpuSlowdownMultiplier=6',
-          ]);
-          if (status !== 0) {
-            console.log('Lighthouse failed, skipping run...');
-            continue;
-          }
-          runnerResult = JSON.parse(stdout.toString());
-        } else {
-          const { data } = await psi(urlWithRun, {
-            key,
-            strategy: platform,
-            //TODO: Figure out why this is necessary for the tests to run but doesn't exist in the types
-            // category: [
-            //   'performance',
-            //   'accessibility',
-            //   'best-practices',
-            //   'seo',
-            //   'pwa',
-            // ],
-          });
-
-          runnerResult = data.lighthouseResult;
-          // TODO: output field data from PSI
-          // console.log()
-          console.log('using PSI server');
+        try {
+          const runnerResult = options.local
+            ? localRun(urlWithRun)
+            : await psiRun(urlWithRun, key, platform);
+          singleOutput(runnerResult);
+          results.push(runnerResult);
+        } catch (e) {
+          console.error(e);
+          continue;
         }
-
-        singleOutput(runnerResult);
-        results.push(runnerResult);
       }
 
       const median = computeMedianRun(results);
