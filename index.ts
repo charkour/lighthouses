@@ -85,15 +85,17 @@ export const runPsi = async (urls: string[], options: Options) => {
     }
 };
 
+const processScore = (score: object) => Math.round(parseFloat(score.toString()) * 100);
+
 // Lab results
 const singleOutput = (runnerResult: psi.LighthouseResult) => {
     fs.writeFileSync('output.json', JSON.stringify(runnerResult, null, 2));
     const { performance, seo, accessibility, 'best-practices': bestPractices, pwa } = runnerResult.categories;
     // TODO: add chalk to color terminal output
     console.log(runnerResult.configSettings.emulatedFormFactor, runnerResult.finalUrl, {
-        performance: Math.round(parseFloat(performance.score.toString()) * 100),
-        accessibility: Math.round(parseFloat(accessibility.score.toString()) * 100),
-        bestPractices: Math.round(parseFloat(bestPractices.score.toString()) * 100),
-        seo: Math.round(parseFloat(seo.score.toString()) * 100),
+        performance: processScore(performance.score),
+        accessibility: processScore(accessibility.score),
+        bestPractices: processScore(bestPractices.score),
+        seo: processScore(seo.score),
     });
 };
