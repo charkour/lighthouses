@@ -115,7 +115,6 @@ interface CustomResults {
             accessibility: number;
             'best-practices': number;
             seo: number;
-            median: number;
         }>;
     };
 }
@@ -169,7 +168,6 @@ export const runPsi = async (options: Options) => {
                         ...(acc[url]?.[platform] ?? []),
                         {
                             performance: processScore(performance.score),
-                            median: processScore(median.categories.performance.score),
                             accessibility: processScore(accessibility.score),
                             'best-practices': processScore(bestPractices.score),
                             seo: processScore(seo.score),
