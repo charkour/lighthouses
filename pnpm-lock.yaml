@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@types/psi': ^4.1.6
+  '@types/uuid': ^9.0.7
   commander: ^11.1.0
   dotenv: 16.0.1
   lighthouse: 9.6.3
@@ -19,6 +20,7 @@ dependencies:
 
 devDependencies:
   '@types/psi': 4.1.6
+  '@types/uuid': 9.0.7
 
 packages:
 
@@ -130,6 +132,10 @@ packages:
 
   /@types/psi/4.1.6:
     resolution: {integrity: sha512-6PStHdV58qrQb8qsKXqjhuT6iOSMbp8whSnwqQVMFp4s6/zlpuMfgML5fmvkfAroSoQ+OETLiVSmiZq2VeH32Q==}
+    dev: true
+
+  /@types/uuid/9.0.7:
+    resolution: {integrity: sha512-WUtIVRUZ9i5dYXefDEAI7sh9/O7jGvHg7Df/5O/gtH3Yabe5odI3UWopVR1qbPXQtvOxWu3mM4XxlYeZtMWF4g==}
     dev: true
 
   /@types/yauzl/2.10.3:

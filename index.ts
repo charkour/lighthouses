@@ -31,7 +31,11 @@ const localRun = (urlWithRun: string) => {
     return JSON.parse(stdout.toString());
 };
 
-const psiRun = async (urlWithRun: string, key: string, platform: (typeof platforms)[number]) => {
+const psiRun = async (
+    urlWithRun: string,
+    key: string,
+    platform: (typeof platforms)[number]
+): Promise<psi.LighthouseResult> => {
     const { data } = await psi(urlWithRun, {
         key,
         strategy: platform,
