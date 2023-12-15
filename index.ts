@@ -4,7 +4,7 @@ import { computeMedianRun } from 'lighthouse/lighthouse-core/lib/median-run.js';
 import psi from 'psi';
 // https://stackoverflow.com/a/62499498/9931154
 import { createRequire } from 'module';
-import { Options } from './options.js';
+import { type Options } from './options.js';
 const metaRequire = createRequire(import.meta.url);
 const lighthouseCli = metaRequire.resolve('lighthouse/lighthouse-cli');
 import { v4 as uuid } from 'uuid';
@@ -41,31 +41,29 @@ const psiRun = async (
     const { data } = await psi(urlWithRun, {
         key,
         strategy: platform,
-        //TODO: Figure out why this is necessary for the tests to run but doesn't exist in the types
-        // @ts-ignore
+        // @ts-ignore -- this is necessary for the current setup to work but is not in the types
         category: ['performance', 'accessibility', 'best-practices', 'seo', 'pwa'],
     });
 
-    // TODO: output field data from PSI
     console.log('using PSI server');
     return data.lighthouseResult;
 };
 
 export const runPsi = async (urls: string[], options: Options) => {
     console.log('Running PageSpeed Insights...');
-    const numRuns = options.number ?? NUM_RUNS;
+    const numRuns = options.num ?? NUM_RUNS;
 
     options.mobile && platforms.filter((url) => url === 'mobile');
 
     for (const url of urls) {
         for (const platform of platforms) {
             const results = [];
-            for (let i = 0; i < numRuns; i++) {
+            for (let i = 0; i < numRuns; ++i) {
                 // To prevent Google PSI API from returning the previous cached result
                 const urlWithRun = `${url}?run=${uuid()}`;
                 const key = options.key ?? process.env.API_KEY ?? '';
                 console.log(
-                    `Running ${platform} Lighthouse audit #${i + 1} ${
+                    `Running ${platform} Lighthouse audit #${i + 1}${!!options.num ? ` of ${options.num}` : ''} ${
                         options.local ? 'locally' : 'on Google'
                     } for ${urlWithRun}`
                 );
@@ -81,25 +79,49 @@ export const runPsi = async (urls: string[], options: Options) => {
             }
 
             const median = computeMedianRun(results);
-            console.log('Median performance score was', Math.round(median.categories.performance.score * 100));
+            console.log(
+                `Median performance score on ${platform} was`,
+                colorScore(processScore(median.categories.performance.score), true),
+                '\n'
+            );
         }
     }
 };
 
-const colorScore = (score: number) => {
+const colorMap = {
+    bg: {
+        red: chalk.bgRed,
+        redBright: chalk.bgRedBright,
+        yellow: chalk.bgYellow,
+        yellowBright: chalk.bgYellowBright,
+        green: chalk.bgGreen,
+        greenBright: chalk.bgGreenBright,
+    },
+    fg: {
+        red: chalk.red,
+        redBright: chalk.redBright,
+        yellow: chalk.yellow,
+        yellowBright: chalk.yellowBright,
+        green: chalk.green,
+        greenBright: chalk.greenBright,
+    },
+};
+
+const colorScore = (score: number, bg = false) => {
+    const map = bg ? colorMap.bg : colorMap.fg;
     switch (true) {
         case score < 30:
-            return chalk.red(score);
+            return map.red(score);
         case score < 50:
-            return chalk.redBright(score);
+            return map.redBright(score);
         case score < 70:
-            return chalk.yellow(score);
+            return map.yellow(score);
         case score < 90:
-            return chalk.yellowBright(score);
+            return map.yellowBright(score);
         case score < 95:
-            return chalk.green(score);
+            return map.green(score);
         case score <= 100:
-            return chalk.greenBright(score);
+            return map.greenBright(score);
     }
 };
 const processScore = (score: object) => Math.round(parseFloat(score.toString()) * 100);
@@ -107,11 +129,11 @@ const processScore = (score: object) => Math.round(parseFloat(score.toString()) 
 // Lab results
 const singleOutput = (runnerResult: psi.LighthouseResult) => {
     fs.writeFileSync('output.json', JSON.stringify(runnerResult, null, 2));
-    const { performance, seo, accessibility, 'best-practices': bestPractices, pwa } = runnerResult.categories;
+    const { performance, seo, accessibility, 'best-practices': bestPractices } = runnerResult.categories;
     const log = console.log;
-    log(runnerResult.configSettings.emulatedFormFactor, runnerResult.finalUrl);
-    log('performance', colorScore(processScore(performance.score)));
-    log('accessibility', colorScore(processScore(accessibility.score)));
-    log('bestPractices', colorScore(processScore(bestPractices.score)));
-    log('seo', colorScore(processScore(seo.score)));
+    log('\n', runnerResult.configSettings.emulatedFormFactor ?? '', runnerResult.finalUrl);
+    log('performance:', colorScore(processScore(performance.score)));
+    log('accessibility:', colorScore(processScore(accessibility.score)));
+    log('bestPractices:', colorScore(processScore(bestPractices.score)));
+    log('seo:', colorScore(processScore(seo.score)), '\n');
 };

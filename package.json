@@ -1,15 +1,15 @@
 {
   "name": "lighthouses",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tcom": "bun run ./cli.js -w https://www.tekton.com && bun run ./cli.js -w https://www.tekton.com -m",
+    "tcom": "bun run ./cli.ts -w https://www.tekton.com && bun run ./cli.ts -w https://www.tekton.com -m",
     "type-check": "tsc --noEmit"
   },
-  "author": "",
+  "author": "@charkour, @TheDunco",
   "license": "MIT",
   "dependencies": {
     "chalk": "^5.3.0",
