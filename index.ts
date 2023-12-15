@@ -100,7 +100,6 @@ const psiRun = async (
 
 // Lab results
 const singleOutput = (runnerResult: psi.LighthouseResult) => {
-    fs.writeFileSync('output.json', JSON.stringify(runnerResult, null, 2));
     const { performance, seo, accessibility, 'best-practices': bestPractices } = runnerResult.categories;
     const log = console.log;
     log('\n', colorPlatform(runnerResult.configSettings.emulatedFormFactor ?? ''), runnerResult.finalUrl);
