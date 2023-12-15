@@ -85,7 +85,17 @@ export const runPsi = async (urls: string[], options: Options) => {
 };
 
 // Lab results
-const singleOutput = (runnerResult) => {
+const singleOutput = (runnerResult: {
+    categories: {
+        performance: { score: number };
+        seo: any;
+        accessibility: { score: number };
+        'best-practices': { score: number };
+        pwa: any;
+    };
+    configSettings: { formFactor: any };
+    finalUrl: any;
+}) => {
     const { performance, seo, accessibility, 'best-practices': bestPractices, pwa } = runnerResult.categories;
     // TODO: add chalk to color terminal output
     console.log(runnerResult.configSettings.formFactor, runnerResult.finalUrl, {
