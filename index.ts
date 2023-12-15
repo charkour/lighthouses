@@ -7,6 +7,7 @@ import { createRequire } from 'module';
 import { Options } from './options.js';
 const metaRequire = createRequire(import.meta.url);
 const lighthouseCli = metaRequire.resolve('lighthouse/lighthouse-cli');
+import { v4 as uuid } from 'uuid';
 
 const NUM_RUNS = 5;
 const platforms = ['mobile', 'desktop'] as const;
@@ -55,7 +56,7 @@ export const runPsi = async (urls: string[], options: Options) => {
             const results = [];
             for (let i = 0; i < numRuns; i++) {
                 // To prevent Google PSI API from returning the previous cached result
-                const urlWithRun = `${url}?run=${i}`;
+                const urlWithRun = `${url}?run=${i}-${uuid()}`;
                 const key = options.key ?? process.env.API_KEY ?? '';
                 console.log(
                     `Running ${platform} Lighthouse audit #${i + 1} ${
