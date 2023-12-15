@@ -8,6 +8,7 @@ import { Options } from './options.js';
 const metaRequire = createRequire(import.meta.url);
 const lighthouseCli = metaRequire.resolve('lighthouse/lighthouse-cli');
 import { v4 as uuid } from 'uuid';
+import fs from 'fs';
 
 const NUM_RUNS = 5;
 const platforms = ['mobile', 'desktop'] as const;
@@ -85,23 +86,14 @@ export const runPsi = async (urls: string[], options: Options) => {
 };
 
 // Lab results
-const singleOutput = (runnerResult: {
-    categories: {
-        performance: { score: number };
-        seo: any;
-        accessibility: { score: number };
-        'best-practices': { score: number };
-        pwa: any;
-    };
-    configSettings: { formFactor: any };
-    finalUrl: any;
-}) => {
+const singleOutput = (runnerResult: psi.LighthouseResult) => {
+    fs.writeFileSync('output.json', JSON.stringify(runnerResult, null, 2));
     const { performance, seo, accessibility, 'best-practices': bestPractices, pwa } = runnerResult.categories;
     // TODO: add chalk to color terminal output
-    console.log(runnerResult.configSettings.formFactor, runnerResult.finalUrl, {
-        performance: Math.round(performance.score * 100),
-        accessibility: Math.round(accessibility.score * 100),
-        bestPractices: Math.round(bestPractices.score * 100),
-        seo: Math.round(seo.score * 100),
+    console.log(runnerResult.configSettings.emulatedFormFactor, runnerResult.finalUrl, {
+        performance: Math.round(parseFloat(performance.score.toString()) * 100),
+        accessibility: Math.round(parseFloat(accessibility.score.toString()) * 100),
+        bestPractices: Math.round(parseFloat(bestPractices.score.toString()) * 100),
+        seo: Math.round(parseFloat(seo.score.toString()) * 100),
     });
 };
