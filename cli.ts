@@ -14,6 +14,6 @@ program
     .addOption(mobileOption)
     .action(async (options: Options) => {
         console.log('options (parsed) :>>', options);
-        await runPsi(options.websites, options);
+        await runPsi(options);
     })
     .parseAsync();
