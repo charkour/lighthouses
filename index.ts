@@ -9,6 +9,7 @@ const metaRequire = createRequire(import.meta.url);
 const lighthouseCli = metaRequire.resolve('lighthouse/lighthouse-cli');
 import { v4 as uuid } from 'uuid';
 import fs from 'fs';
+import chalk from 'chalk';
 
 const NUM_RUNS = 5;
 const platforms = ['mobile', 'desktop'] as const;
@@ -61,7 +62,7 @@ export const runPsi = async (urls: string[], options: Options) => {
             const results = [];
             for (let i = 0; i < numRuns; i++) {
                 // To prevent Google PSI API from returning the previous cached result
-                const urlWithRun = `${url}?run=${i}-${uuid()}`;
+                const urlWithRun = `${url}?run=${uuid()}`;
                 const key = options.key ?? process.env.API_KEY ?? '';
                 console.log(
                     `Running ${platform} Lighthouse audit #${i + 1} ${
@@ -85,17 +86,32 @@ export const runPsi = async (urls: string[], options: Options) => {
     }
 };
 
+const colorScore = (score: number) => {
+    switch (true) {
+        case score < 30:
+            return chalk.red(score);
+        case score < 50:
+            return chalk.redBright(score);
+        case score < 70:
+            return chalk.yellow(score);
+        case score < 90:
+            return chalk.yellowBright(score);
+        case score < 95:
+            return chalk.green(score);
+        case score <= 100:
+            return chalk.greenBright(score);
+    }
+};
 const processScore = (score: object) => Math.round(parseFloat(score.toString()) * 100);
 
 // Lab results
 const singleOutput = (runnerResult: psi.LighthouseResult) => {
     fs.writeFileSync('output.json', JSON.stringify(runnerResult, null, 2));
     const { performance, seo, accessibility, 'best-practices': bestPractices, pwa } = runnerResult.categories;
-    // TODO: add chalk to color terminal output
-    console.log(runnerResult.configSettings.emulatedFormFactor, runnerResult.finalUrl, {
-        performance: processScore(performance.score),
-        accessibility: processScore(accessibility.score),
-        bestPractices: processScore(bestPractices.score),
-        seo: processScore(seo.score),
-    });
+    const log = console.log;
+    log(runnerResult.configSettings.emulatedFormFactor, runnerResult.finalUrl);
+    log('performance', colorScore(processScore(performance.score)));
+    log('accessibility', colorScore(processScore(accessibility.score)));
+    log('bestPractices', colorScore(processScore(bestPractices.score)));
+    log('seo', colorScore(processScore(seo.score)));
 };
