@@ -1,0 +1,8 @@
+# general
+node_modules
+*.json
+*.yml
+*.md
+*.prettierrc
+build/
+dist/
