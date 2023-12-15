@@ -94,7 +94,6 @@ const psiRun = async (
         category: ['performance', 'accessibility', 'best-practices', 'seo', 'pwa'],
     });
 
-    console.log('using PSI server');
     return data.lighthouseResult;
 };
 
