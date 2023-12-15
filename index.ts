@@ -90,12 +90,24 @@ const psiRun = async (
     const { data } = await psi(urlWithRun, {
         key,
         strategy: platform,
-        // @ts-ignore -- this is necessary for the current setup to work but is not in the types
+        // @ts-ignore -- this is necessary for the current setup to work but does not exist in the types
         category: ['performance', 'accessibility', 'best-practices', 'seo', 'pwa'],
     });
 
     console.log('using PSI server');
     return data.lighthouseResult;
+};
+
+// Lab results
+const singleOutput = (runnerResult: psi.LighthouseResult) => {
+    fs.writeFileSync('output.json', JSON.stringify(runnerResult, null, 2));
+    const { performance, seo, accessibility, 'best-practices': bestPractices } = runnerResult.categories;
+    const log = console.log;
+    log('\n', colorPlatform(runnerResult.configSettings.emulatedFormFactor ?? ''), runnerResult.finalUrl);
+    log('performance:', colorScore(processScore(performance.score)));
+    log('accessibility:', colorScore(processScore(accessibility.score)));
+    log('bestPractices:', colorScore(processScore(bestPractices.score)));
+    log('seo:', colorScore(processScore(seo.score)), '\n');
 };
 
 export const runPsi = async (options: Options) => {
@@ -139,16 +151,4 @@ export const runPsi = async (options: Options) => {
             );
         }
     }
-};
-
-// Lab results
-const singleOutput = (runnerResult: psi.LighthouseResult) => {
-    fs.writeFileSync('output.json', JSON.stringify(runnerResult, null, 2));
-    const { performance, seo, accessibility, 'best-practices': bestPractices } = runnerResult.categories;
-    const log = console.log;
-    log('\n', colorPlatform(runnerResult.configSettings.emulatedFormFactor ?? ''), runnerResult.finalUrl);
-    log('performance:', colorScore(processScore(performance.score)));
-    log('accessibility:', colorScore(processScore(accessibility.score)));
-    log('bestPractices:', colorScore(processScore(bestPractices.score)));
-    log('seo:', colorScore(processScore(seo.score)), '\n');
 };
