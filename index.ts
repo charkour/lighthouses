@@ -110,25 +110,38 @@ const singleOutput = (runnerResult: psi.LighthouseResult) => {
     log('seo:', colorScore(processScore(seo.score)), '\n');
 };
 
+interface CustomResults {
+    [website: string]: {
+        [platform: string]: Array<{
+            performance: number;
+            accessibility: number;
+            'best-practices': number;
+            seo: number;
+            median: number;
+        }>;
+    };
+}
+
 export const runPsi = async (options: Options) => {
     console.log('Running PageSpeed Insights...');
     const numRuns = options.num ?? NUM_RUNS;
 
     options.mobile && platforms.filter((url) => url === 'mobile');
 
+    let customResults: CustomResults = {};
+
     for (const url of options.websites) {
         for (const platform of platforms) {
             const results = [];
-            for (let i = 0; i < numRuns; ++i) {
+            for (let i = 0; i < numRuns; i++) {
                 // To prevent Google PSI API from returning the previous cached result
                 const urlWithRun = `${url}?run=${uuid()}`;
                 const key = options.key ?? process.env.API_KEY ?? '';
                 console.log(
                     'Running',
                     colorPlatform(platform),
-                    `Lighthouse audit #${i + 1}${!!options.num ? ` of ${options.num}` : ''} ${
-                        options.local ? 'locally' : 'on Google'
-                    } for ${urlWithRun}`
+                    `Lighthouse audit #${i + 1} of ${numRuns}`,
+                    `${options.local ? 'locally' : 'on Google'}. \n${urlWithRun}:`
                 );
 
                 try {
@@ -149,6 +162,26 @@ export const runPsi = async (options: Options) => {
                 colorScore(processScore(median.categories.performance.score), true),
                 '\n'
             );
+
+            customResults = results.reduce((acc, curr) => {
+                const { performance, seo, accessibility, 'best-practices': bestPractices } = curr.categories;
+                console.log('acc[url]', acc[url]);
+                acc[url] = {
+                    ...customResults[url],
+                    [platform]: [
+                        ...(acc[url]?.[platform] ?? []),
+                        {
+                            performance: processScore(performance.score),
+                            median: processScore(median.categories.performance.score),
+                            accessibility: processScore(accessibility.score),
+                            'best-practices': processScore(bestPractices.score),
+                            seo: processScore(seo.score),
+                        },
+                    ],
+                };
+                return acc;
+            }, {} as CustomResults);
         }
     }
+    fs.writeFileSync('results.json', JSON.stringify(customResults, null, 2));
 };
