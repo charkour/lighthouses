@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "esnext"
+    ],
+    "module": "NodeNext",
+    "allowJs": false,
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "rootDir": ".",
+    "incremental": true,
+    "noErrorTruncation": true,
+  },
+	"include": [
+		"**/*.d.ts",
+		"**/*.ts",
+		"**/*.js"
+	],
+  "exclude": [
+    "node_modules",
+  ],
+  "ts-node": {
+    "transpileOnly": true
+  },
+}
