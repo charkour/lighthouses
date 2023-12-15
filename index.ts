@@ -145,8 +145,8 @@ export const runPsi = async (options: Options) => {
 
                 try {
                     const runnerResult = options.local ? localRun(urlWithRun) : await psiRun(urlWithRun, key, platform);
-                    singleOutput(runnerResult);
                     results.push(runnerResult);
+                    singleOutput(runnerResult);
                 } catch (e) {
                     console.error(e);
                     continue;
