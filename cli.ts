@@ -4,7 +4,7 @@ import fs from 'fs';
 import { runPsi } from './index.js';
 import 'dotenv/config';
 import { program } from 'commander';
-import { Options, keyOption, localOption, mobileOption, numOption, websitesOption } from './options.js';
+import { type Options, keyOption, localOption, mobileOption, numOption, websitesOption } from './options.js';
 
 program
     .addOption(keyOption)

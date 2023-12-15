@@ -177,8 +177,12 @@ export const runPsi = async (options: Options) => {
                     ],
                 };
                 return acc;
-            }, {} as CustomResults);
+            }, customResults);
         }
     }
-    fs.writeFileSync(`results/${new Date().toISOString()}.json`, JSON.stringify(customResults, null, 2));
+    fs.mkdirSync('results', { recursive: true });
+    fs.writeFileSync(
+        `./results/${new Date().toISOString().split('T')[0]}.json`,
+        JSON.stringify(customResults, null, 2)
+    );
 };
