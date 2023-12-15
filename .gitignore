@@ -5,3 +5,4 @@ list.txt
 tsconfig.tsbuildinfo
 output.json
 https:/*
+scripts/*

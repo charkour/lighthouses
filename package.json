@@ -6,7 +6,6 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tcom": "bun run ./cli.ts -w https://www.tekton.com && bun run ./cli.ts -w https://www.tekton.com -m",
     "type-check": "tsc --noEmit"
   },
   "author": "@charkour, @TheDunco",

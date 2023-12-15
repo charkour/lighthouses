@@ -12,7 +12,7 @@ const getListOfWebsites = (sites: string): string[] => {
                 .filter((value) => !!value && !value.startsWith('//'));
             return data;
         } catch (err) {
-            console.error(err);
+            console.warn(`Could not read file ${sites}, using ${sites} as a URL`);
         }
     }
     return [sites];

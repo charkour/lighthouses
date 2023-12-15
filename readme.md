@@ -8,13 +8,15 @@ A simple script to run multiple lighthouse audits on multiple sites.
 2. Run `pnpm install`
 3. Run `bun run cli.ts -h` to see the options
 
-usage: `bun run ./cli.ts <input> [options]`
+usage: `bun run ./cli.ts [options]`
 
-normal usage: `pnpm tcom`
+example: `bun run ./cli.ts -w list.txt -n 6`
+where list.txt looks like this:
 
-example: `bun run cli.ts www.example.com www.google.com -n 6`
-
-typical: `bun run cli.ts -w list.txt`
+```plaintext
+www.example.com
+www.google.com
+```
 
 ## .env
 
