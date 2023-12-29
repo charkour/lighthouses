@@ -1,5 +1,16 @@
+import chalk from 'chalk';
 import { Option } from 'commander';
 import fs from 'fs';
+
+export const websitesOptionError = () => {
+    console.error(
+        chalk.redBright('Specify a website URL or a newline-separated list of URLs:'),
+        '$ bun run ./cli.ts ',
+        chalk.yellow(chalk.dim('-w <www.example.com | list.txt>'))
+    );
+
+    process.exit(1);
+};
 
 const intParser = (val: string) => parseInt(val);
 
@@ -18,6 +29,8 @@ const getListOfWebsites = (sites: string): string[] => {
     return [sites];
 };
 
+export const verboseOption = new Option('-v --verbose');
+
 export const keyOption = new Option('-k, --key <key>', 'Add an Google API Key (optional, defaults to no key)');
 
 export const localOption = new Option(
@@ -33,8 +46,7 @@ export const websitesOption = new Option(
 ).argParser((sites) => {
     const websites = getListOfWebsites(sites);
     if (!websites || !websites.length) {
-        console.error('Specify a URL: $ bun run ./cli.js www.example.com');
-        process.exit(1);
+        websitesOptionError();
     }
     return websites;
 });
@@ -45,6 +57,7 @@ export type Options = {
     key?: string;
     local?: boolean;
     num?: number;
-    websites?: string[];
+    websites: string[];
     mobile?: boolean;
+    verbose?: boolean;
 };

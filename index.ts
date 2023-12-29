@@ -97,11 +97,13 @@ const psiRun = async (
     return data.lighthouseResult;
 };
 
+const colorUrl = (url: string) => chalk.dim(chalk.green(chalk.underline(url)));
+
 // Lab results
 const singleOutput = (runnerResult: psi.LighthouseResult) => {
     const { performance, seo, accessibility, 'best-practices': bestPractices } = runnerResult.categories;
     const log = console.log;
-    log('\n', colorPlatform(runnerResult.configSettings.emulatedFormFactor ?? ''), runnerResult.finalUrl);
+    log('\n' + colorPlatform(runnerResult.configSettings.emulatedFormFactor ?? ''), colorUrl(runnerResult.finalUrl));
     log('performance:', colorScore(processScore(performance.score)));
     log('accessibility:', colorScore(processScore(accessibility.score)));
     log('bestPractices:', colorScore(processScore(bestPractices.score)));
@@ -138,7 +140,7 @@ export const runPsi = async (options: Options) => {
                     'Running',
                     colorPlatform(platform),
                     `Lighthouse audit #${i + 1} of ${numRuns}`,
-                    `${options.local ? 'locally' : 'on Google'}. \n${urlWithRun}:`
+                    `${options.local ? 'locally' : 'on Google'}. \n${colorUrl(urlWithRun)}:`
                 );
 
                 try {

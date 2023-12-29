@@ -3,7 +3,16 @@ import fs from 'fs';
 import { runPsi } from './index.js';
 import 'dotenv/config';
 import { program } from 'commander';
-import { type Options, keyOption, localOption, mobileOption, numOption, websitesOption } from './options.js';
+import {
+    type Options,
+    keyOption,
+    localOption,
+    mobileOption,
+    numOption,
+    websitesOption,
+    websitesOptionError,
+    verboseOption,
+} from './options.js';
 
 program
     .addOption(keyOption)
@@ -11,8 +20,14 @@ program
     .addOption(numOption)
     .addOption(websitesOption)
     .addOption(mobileOption)
+    .addOption(verboseOption)
     .action(async (options: Options) => {
-        console.log('options (parsed) :>>', options);
+        if (options.verbose) {
+            console.log('options (parsed) :>>', options);
+        }
+        if (!options.websites) {
+            websitesOptionError();
+        }
         await runPsi(options);
     })
     .parseAsync();
