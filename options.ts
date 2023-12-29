@@ -12,8 +12,6 @@ export const websitesOptionError = () => {
     process.exit(1);
 };
 
-const intParser = (val: string) => parseInt(val);
-
 const getListOfWebsites = (sites: string): string[] => {
     if (sites) {
         try {
@@ -38,7 +36,7 @@ export const localOption = new Option(
     'Run the tests on your local machine (optional, defaults to Google)'
 );
 
-export const numOption = new Option('-n, --num <num>', 'Number of runs (optional, defaults to 5)').argParser(intParser);
+export const numOption = new Option('-n, --num <num>', 'Number of runs (optional, defaults to 5)').argParser(parseInt);
 
 export const websitesOption = new Option(
     '-w, --websites <websites>',
