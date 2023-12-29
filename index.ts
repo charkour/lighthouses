@@ -1,5 +1,6 @@
 // https://github.com/GoogleChrome/lighthouse/blob/master/docs/variability.md#run-lighthouse-multiple-times
 import { spawnSync } from 'child_process';
+// @ts-expect-error: there are no types for this package
 import { computeMedianRun } from 'lighthouse/lighthouse-core/lib/median-run.js';
 import psi from 'psi';
 // https://stackoverflow.com/a/62499498/9931154

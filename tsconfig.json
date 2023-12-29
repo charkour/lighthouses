@@ -6,7 +6,7 @@
     ],
     "module": "NodeNext",
     "allowJs": false,
-    "strict": false,
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "rootDir": ".",
