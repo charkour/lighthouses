@@ -182,8 +182,11 @@ export const runPsi = async (options: Options) => {
         }
     }
     fs.mkdirSync('results', { recursive: true });
+    const now = new Date();
+    const split = now.toISOString().split('T');
+
     fs.writeFileSync(
-        `./results/${new Date().toISOString().split('T')[0]}.json`,
+        `./results/${split[0]}T${split[1].replace(/[:.]/g, '-')}.json`,
         JSON.stringify(customResults, null, 2)
     );
 };
