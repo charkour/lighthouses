@@ -90,7 +90,7 @@ const psiRun = async (
     const { data } = await psi(urlWithRun, {
         key,
         strategy: platform,
-        // @ts-ignore -- this is necessary for the current setup to work but does not exist in the types
+        // @ts-expect-error: this is necessary for the current setup to work but does not exist in the types
         category: ['performance', 'accessibility', 'best-practices', 'seo', 'pwa'],
     });
 
