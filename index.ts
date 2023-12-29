@@ -8,7 +8,7 @@ import { createRequire } from 'module';
 import { type Options } from './options.js';
 const metaRequire = createRequire(import.meta.url);
 const lighthouseCli = metaRequire.resolve('lighthouse/lighthouse-cli');
-import { v4 as uuid } from 'uuid';
+import { randomUUID as uuid } from 'crypto';
 import fs from 'fs';
 import chalk from 'chalk';
 
