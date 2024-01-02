@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "type-check": "tsc --noEmit"
   },  
-  "collaborators": ["Charlie Kornoelje (https://www.github.com/charkour", "Duncan Van Keulen (https://www.github.com/TheDunco)"],
+  "collaborators": ["Charlie Kornoelje (https://www.github.com/charkour)", "Duncan Van Keulen (https://www.github.com/TheDunco)"],
   "license": "MIT",
   "dependencies": {
     "@types/node": "^20.10.5",
