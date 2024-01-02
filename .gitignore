@@ -2,3 +2,7 @@
 node_modules
 .env*
 list.txt
+tsconfig.tsbuildinfo
+https:/*
+scripts/*
+results/*

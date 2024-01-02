@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": [
+      "esnext"
+    ],
+    "module": "NodeNext",
+    "allowJs": false,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "rootDir": ".",
+    "incremental": true,
+    "noErrorTruncation": true,
+  },
+	"include": [
+		"**/*.d.ts",
+		"**/*.ts",
+		"**/*.js"
+	],
+  "exclude": [
+    "node_modules",
+  ],
+}

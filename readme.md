@@ -5,14 +5,17 @@ A simple script to run multiple lighthouse audits on multiple sites.
 ## Installation
 
 1. Clone the repo
-2. Run `npm install`
-3. Run `node cli.js -h` to see the options
+2. Run `pnpm install`
+3. Run `bun run ./cli.ts -h` to see the options
 
-usage: `node cli.js <input> [options]`
+usage: `bun run ./cli.ts [options]`
 
-example: `node cli.js www.example.com www.google.com -n 6`
+example: `bun run ./cli.ts -w list.txt -n 6` where list.txt looks like this:
 
-typical: `node cli.js -w list.txt`
+```plaintext
+www.example.com
+www.google.com
+```
 
 ## .env
 
