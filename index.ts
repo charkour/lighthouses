@@ -175,6 +175,7 @@ export const runPsi = async (options: Options) => {
                         [platform]: [
                             ...(acc[url]?.[platform] ?? []),
                             {
+                                'median-performance': processScore(median.categories.performance.score),
                                 performance: processScore(performance.score),
                                 accessibility: processScore(accessibility.score),
                                 'best-practices': processScore(bestPractices.score),
