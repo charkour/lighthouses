@@ -130,57 +130,65 @@ export const runPsi = async (options: Options) => {
 
     let customResults: CustomResults = {};
 
-    for (const url of options.websites) {
-        for (const platform of platforms) {
-            const results = [];
-            for (let i = 0; i < numRuns; i++) {
-                // To prevent Google PSI API from returning the previous cached result
-                const urlWithRun = `${url}?run=${uuid()}`;
-                const key = options.key ?? process.env.API_KEY ?? '';
+    await Promise.all(
+        options.websites.map(async (url): Promise<void> => {
+            for (const platform of platforms) {
+                const results = [];
+                for (let i = 0; i < numRuns; i++) {
+                    // To prevent Google PSI API from returning the previous cached result
+                    const urlWithRun = `${url}?run=${uuid()}`;
+                    const key = options.key ?? process.env.API_KEY ?? '';
+                    console.log(
+                        'Running',
+                        colorPlatform(platform),
+                        `Lighthouse audit #${i + 1} of ${numRuns}`,
+                        `${options.local ? 'locally' : 'on Google'}. \n${colorUrl(urlWithRun)}:`
+                    );
+
+                    try {
+                        const runnerResult = options.local
+                            ? localRun(urlWithRun)
+                            : await psiRun(urlWithRun, key, platform);
+                        results.push(runnerResult);
+                        singleOutput(runnerResult);
+                    } catch (e) {
+                        console.error(e);
+                        continue;
+                    }
+                }
+
+                const median = computeMedianRun(results);
                 console.log(
-                    'Running',
+                    `Median performance score on`,
                     colorPlatform(platform),
-                    `Lighthouse audit #${i + 1} of ${numRuns}`,
-                    `${options.local ? 'locally' : 'on Google'}. \n${colorUrl(urlWithRun)}:`
+                    'for',
+                    colorUrl(url),
+                    'was',
+                    colorScore(processScore(median.categories.performance.score), true),
+                    '\n'
                 );
 
-                try {
-                    const runnerResult = options.local ? localRun(urlWithRun) : await psiRun(urlWithRun, key, platform);
-                    results.push(runnerResult);
-                    singleOutput(runnerResult);
-                } catch (e) {
-                    console.error(e);
-                    continue;
-                }
+                customResults = results.reduce((acc, curr) => {
+                    const { performance, seo, accessibility, 'best-practices': bestPractices } = curr.categories;
+                    acc[url] = {
+                        ...customResults[url],
+                        [platform]: [
+                            ...(acc[url]?.[platform] ?? []),
+                            {
+                                'median-performance': processScore(median.categories.performance.score),
+                                performance: processScore(performance.score),
+                                accessibility: processScore(accessibility.score),
+                                'best-practices': processScore(bestPractices.score),
+                                seo: processScore(seo.score),
+                            },
+                        ],
+                    };
+                    return acc;
+                }, customResults);
             }
-
-            const median = computeMedianRun(results);
-            console.log(
-                `Median performance score on`,
-                colorPlatform(platform),
-                'was',
-                colorScore(processScore(median.categories.performance.score), true),
-                '\n'
-            );
-
-            customResults = results.reduce((acc, curr) => {
-                const { performance, seo, accessibility, 'best-practices': bestPractices } = curr.categories;
-                acc[url] = {
-                    ...customResults[url],
-                    [platform]: [
-                        ...(acc[url]?.[platform] ?? []),
-                        {
-                            performance: processScore(performance.score),
-                            accessibility: processScore(accessibility.score),
-                            'best-practices': processScore(bestPractices.score),
-                            seo: processScore(seo.score),
-                        },
-                    ],
-                };
-                return acc;
-            }, customResults);
-        }
-    }
+        })
+    );
+    console.log('Writing results to file...');
     fs.mkdirSync('results', { recursive: true });
     const now = new Date();
     const split = now.toISOString().split('T');
