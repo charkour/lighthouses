@@ -9,7 +9,7 @@ dependencies:
     specifier: ^20.10.5
     version: 20.10.5
   chalk:
-    specifier: ^5.3.0
+    specifier: 5.3.0
     version: 5.3.0
   commander:
     specifier: ^11.1.0
@@ -31,9 +31,6 @@ devDependencies:
   '@types/psi':
     specifier: ^4.1.6
     version: 4.1.6
-  '@types/uuid':
-    specifier: ^9.0.7
-    version: 9.0.7
 
 packages:
 
@@ -158,10 +155,6 @@ packages:
     dependencies:
       '@types/node': 20.10.5
     dev: false
-
-  /@types/uuid@9.0.7:
-    resolution: {integrity: sha512-WUtIVRUZ9i5dYXefDEAI7sh9/O7jGvHg7Df/5O/gtH3Yabe5odI3UWopVR1qbPXQtvOxWu3mM4XxlYeZtMWF4g==}
-    dev: true
 
   /@types/yauzl@2.10.3:
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
