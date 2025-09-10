@@ -4,13 +4,13 @@ import { spawnSync } from 'child_process';
 import { computeMedianRun } from 'lighthouse/lighthouse-core/lib/median-run.js';
 import psi from 'psi';
 // https://stackoverflow.com/a/62499498/9931154
+import chalk from 'chalk';
+import { randomUUID as uuid } from 'crypto';
+import fs from 'fs';
 import { createRequire } from 'module';
 import { type Options } from './options.js';
 const metaRequire = createRequire(import.meta.url);
 const lighthouseCli = metaRequire.resolve('lighthouse/lighthouse-cli');
-import { randomUUID as uuid } from 'crypto';
-import fs from 'fs';
-import chalk from 'chalk';
 
 const NUM_RUNS = 5;
 const platforms = ['mobile', 'desktop'] as const;
@@ -102,7 +102,7 @@ const colorUrl = (url: string) => chalk.dim(chalk.green(chalk.underline(url)));
 
 // Lab results
 const singleOutput = (runnerResult: psi.LighthouseResult) => {
-    const { performance, seo, accessibility, 'best-practices': bestPractices } = runnerResult.categories;
+    const { performance, seo, accessibility, 'best-practices': bestPractices } = runnerResult?.categories;
     const log = console.log;
     log('\n' + colorPlatform(runnerResult.configSettings.emulatedFormFactor ?? ''), colorUrl(runnerResult.finalUrl));
     log('performance:', colorScore(processScore(performance.score)));
@@ -156,17 +156,21 @@ export const runPsi = async (options: Options) => {
                         continue;
                     }
                 }
-
-                const median = computeMedianRun(results);
-                console.log(
-                    `Median performance score on`,
-                    colorPlatform(platform),
-                    'for',
-                    colorUrl(url),
-                    'was',
-                    colorScore(processScore(median.categories.performance.score), true),
-                    '\n'
-                );
+                let median = null;
+                try {
+                    median = computeMedianRun(results);
+                    console.log(
+                        `Median performance score on`,
+                        colorPlatform(platform),
+                        'for',
+                        colorUrl(url),
+                        'was',
+                        colorScore(processScore(median.categories.performance.score), true),
+                        '\n'
+                    );
+                } catch (e) {
+                    console.error(e, 'Failed to compute median for ', JSON.stringify(results, null, 2));
+                }
 
                 customResults = results.reduce((acc, curr) => {
                     const { performance, seo, accessibility, 'best-practices': bestPractices } = curr.categories;
@@ -175,7 +179,7 @@ export const runPsi = async (options: Options) => {
                         [platform]: [
                             ...(acc[url]?.[platform] ?? []),
                             {
-                                'median-performance': processScore(median.categories.performance.score),
+                                'median-performance': median ? processScore(median.categories.performance.score) : 0,
                                 performance: processScore(performance.score),
                                 accessibility: processScore(accessibility.score),
                                 'best-practices': processScore(bestPractices.score),
