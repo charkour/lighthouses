@@ -16,7 +16,7 @@
     "chalk": "5.3.0",
     "commander": "^11.1.0",
     "dotenv": "16.0.1",
-    "lighthouse": "9.6.3",
+    "lighthouse": "13.0.1",
     "psi": "^4.1.0",
     "typescript": "^5.3.3"
   },
