@@ -1,7 +1,6 @@
 // https://github.com/GoogleChrome/lighthouse/blob/master/docs/variability.md#run-lighthouse-multiple-times
 import { spawnSync } from 'child_process';
-// @ts-expect-error: there are no types for this package
-import { computeMedianRun } from 'lighthouse/lighthouse-core/lib/median-run.js';
+import { computeMedianRun } from 'lighthouse/core/lib/median-run.js';
 import psi from 'psi';
 // https://stackoverflow.com/a/62499498/9931154
 import chalk from 'chalk';
@@ -10,7 +9,7 @@ import fs from 'fs';
 import { createRequire } from 'module';
 import { type Options } from './options.js';
 const metaRequire = createRequire(import.meta.url);
-const lighthouseCli = metaRequire.resolve('lighthouse/lighthouse-cli');
+const lighthouseCli = metaRequire.resolve('lighthouse/cli');
 
 const NUM_RUNS = 5;
 const platforms = ['mobile', 'desktop'] as const;
@@ -86,13 +85,13 @@ const localRun = (urlWithRun: string) => {
 const psiRun = async (
     urlWithRun: string,
     key: string,
-    platform: (typeof platforms)[number]
+    platform: (typeof platforms)[number],
 ): Promise<psi.LighthouseResult> => {
     const { data } = await psi(urlWithRun, {
         key,
         strategy: platform,
         // @ts-expect-error: this is necessary for the current setup to work but does not exist in the types
-        category: ['performance', 'accessibility', 'best-practices', 'seo', 'pwa'],
+        category: ['performance', 'accessibility', 'best-practices', 'seo'],
     });
 
     return data.lighthouseResult;
@@ -142,7 +141,7 @@ export const runPsi = async (options: Options) => {
                         'Running',
                         colorPlatform(platform),
                         `Lighthouse audit #${i + 1} of ${numRuns}`,
-                        `${options.local ? 'locally' : 'on Google'}. \n${colorUrl(urlWithRun)}:`
+                        `${options.local ? 'locally' : 'on Google'}. \n${colorUrl(urlWithRun)}:`,
                     );
 
                     try {
@@ -156,7 +155,7 @@ export const runPsi = async (options: Options) => {
                         continue;
                     }
                 }
-                let median = null;
+                let median: ReturnType<typeof computeMedianRun> = null;
                 try {
                     median = computeMedianRun(results);
                     console.log(
@@ -166,7 +165,7 @@ export const runPsi = async (options: Options) => {
                         colorUrl(url),
                         'was',
                         colorScore(processScore(median.categories.performance.score), true),
-                        '\n'
+                        '\n',
                     );
                 } catch (e) {
                     console.error(e, 'Failed to compute median for ', JSON.stringify(results, null, 2));
@@ -190,7 +189,7 @@ export const runPsi = async (options: Options) => {
                     return acc;
                 }, customResults);
             }
-        })
+        }),
     );
     console.log('Writing results to file...');
     fs.mkdirSync('results', { recursive: true });
@@ -199,6 +198,6 @@ export const runPsi = async (options: Options) => {
 
     fs.writeFileSync(
         `./results/${split[0]}T${split[1].replace(/[:.]/g, '-')}.json`,
-        JSON.stringify(customResults, null, 2)
+        JSON.stringify(customResults, null, 2),
     );
 };
